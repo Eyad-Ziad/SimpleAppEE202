@@ -1,0 +1,58 @@
+from typing import Optional
+
+from sqlmodel import Field  # type: ignore
+from sqlmodel import Session, SQLModel, create_engine
+
+
+DATABASE_PATH = "/data/database.sqlite"
+
+
+class Suppliers(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    name: str
+    email: str
+    phone_number: Optional[str] = None
+    country: Optional[str] = None
+    city: Optional[str] = None
+    street_address: Optional[str] = None
+    deliver_speed_rating: int
+    reliability: int
+    note: Optional[str] = None
+
+
+class Purchase_Invoices(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    supplier_id: int = Field()
+
+engine = create_engine(f"sqlite://{DATABASE_PATH}", echo=True)
+SQLModel.metadata.create_all(engine)
+
+with Session(engine) as session:
+    session.add(Suppliers(
+        name="Samsung Pvt. Lmt.",
+        email="support@samsung.com",
+        phone_number="+454-200-1222-122",
+        country="South Korea",
+        city="Seoul",
+        deliver_speed_rating=2,
+        reliability=7
+    ))
+    session.add(Suppliers(
+        name="Cisco Pvt. Lmt.",
+        email="sales@cisco.com",
+        country="United States of America",
+        city="Phoenix, AZ", deliver_speed_rating=7,
+        reliability=10
+    ))
+    session.add(Suppliers(
+        name="Intel Pvt. Lmt.",
+        email="salesupport@intel.com",
+        country="United States of America",
+        city="Denver, CL",
+        deliver_speed_rating=8,
+        reliability=5
+    ))
+    session.commit()
+
+# with Session(engine) as session:
+#     session.
